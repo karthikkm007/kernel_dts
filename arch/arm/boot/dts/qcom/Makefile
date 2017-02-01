@@ -1,5 +1,5 @@
 ifeq ($(CONFIG_OF),y)
-#include $(srctree)/arch/arm/boot/dts/qcom/Makefile.board
+
 dtb-$(CONFIG_ARCH_MSM8974) += msm8974-v1-cdp.dtb \
 	msm8974-v1-fluid.dtb \
 	msm8974-v1-liquid.dtb \
@@ -46,11 +46,15 @@ dtb-$(CONFIG_ARCH_MSM8909) += msm8909-sim.dtb \
 	msm8909-1gb-rcm.dtb \
 	msm8909-pm8916-1gb-rcm.dtb \
 	msm8909-pm8916-mtp.dtb \
+	msm8909-pm8916-wear-mtp.dtb \
 	msm8909-pm8916-cdp.dtb \
 	msm8909-qhd-cdp.dtb \
 	msm8909-qhd-rcm.dtb \
 	msm8909-pm8916-1gb-qhd-rcm.dtb \
 	msm8909-pm8916-qhd-rcm.dtb \
+	msm8909-pm8916-qrd-skut-evt.dtb \
+	msm8909-pm8916-qrd-skut-dvt.dtb \
+	msm8909-pm8916-qrd-skuq.dtb \
 	msm8208-cdp.dtb \
 	msm8208-mtp.dtb \
 	msm8208-1gb-cdp.dtb \
@@ -63,30 +67,48 @@ dtb-$(CONFIG_ARCH_MSM8909) += msm8909-sim.dtb \
 	msm8208-1gb-qrd-skue.dtb \
 	msm8208-1gb-rcm.dtb \
 	msm8208-qhd-cdp.dtb \
-	msm8208-qhd-rcm.dtb
-dtb-$(CONFIG_ARCH_MSM8916) += msm8916-sim.dtb \
-	msm8916-rumi.dtb \
-	msm8916-cdp.dtb \
+	msm8208-qhd-rcm.dtb \
+	msm8909w-wtp.dtb \
+	msm8909w-cdp.dtb \
+	apq8009w-wtp.dtb \
+	apq8009w-cdp.dtb \
+	apq8009-mtp-wcd9326.dtb \
+	msm8909-mtp-wcd9326.dtb \
+	msm8909-mtp-wcd9326-refboard.dtb \
+	msm8909-512mb-mtp-wcd9326-refboard.dtb \
+	apq8009-mtp-wcd9326-refboard.dtb \
+	apq8009-512mb-mtp-wcd9326-refboard.dtb
+
+ifeq ($(CONFIG_MACH_CKT_MSM8939),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8939-spirit.dtb
+else ifeq ($(CONFIG_MACH_HAIER_MSM8916),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8916-g36c1h.dtb
+else ifeq ($(CONFIG_MACH_LONGCHEER_MSM8916),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8916-qrd-l8150.dtb
+else ifeq ($(CONFIG_MACH_HUAQIN_MSM8916),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8916-ql790.dtb
+else ifeq ($(CONFIG_MACH_WINGTECH_MSM8916),y)
+ifeq ($(CONFIG_MACH_WT88047),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8916-wt88047.dtb
+else ifeq ($(CONFIG_MACH_T86519A1),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8916-t86519a1.dtb
+endif
+else ifeq ($(CONFIG_MACH_YULONG_MSM8939),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8939-cp8675-i01-p0.dtb
+else
+dtb-$(CONFIG_ARCH_MSM8916) += msm8916-cdp.dtb \
 	msm8916-cdp-smb1360.dtb \
 	msm8916-mtp.dtb \
-	msm8916-512mb-mtp.dtb \
 	msm8916-mtp-smb1360.dtb \
-	msm8916-512mb-mtp-smb1360.dtb \
-	msm8916-512mb-qrd-skui.dtb \
 	msm8916-qrd-skuh.dtb \
 	msm8916-qrd-skuhf.dtb \
 	msm8916-qrd-skui.dtb \
 	msm8916-qrd-skuic.dtb \
 	msm8916-qrd-skuid.dtb \
-	msm8916-512mb-qrd-skuid.dtb \
-	msm8916-512mb-qrd-skuh.dtb \
 	msm8916-qrd-skut1.dtb \
-	msm8916-qrd-skut2.dtb \
-	msm8916-qrd-skut3.dtb \
 	apq8016-mtp.dtb \
 	apq8016-mtp-smb1360.dtb \
-	msm8939-sim.dtb \
-	msm8939-rumi.dtb \
+	apq8016-sbc.dtb \
 	msm8939-qrd-skuk.dtb \
 	msm8939-qrd-skul.dtb \
 	msm8939-cdp.dtb \
@@ -96,6 +118,15 @@ dtb-$(CONFIG_ARCH_MSM8916) += msm8916-sim.dtb \
 	msm8939-mtp-jdi.dtb \
 	msm8939-mtp-smb1360.dtb \
 	msm8939-mtp-wcd9306.dtb \
+	msm8939-v3.0-qrd-skuk.dtb \
+	msm8939-v3.0-qrd-skul.dtb \
+	msm8939-v3.0-cdp.dtb \
+	msm8939-v3.0-cdp-jdi.dtb \
+	msm8939-v3.0-cdp-jdi-a216-fhd.dtb \
+	msm8939-v3.0-mtp.dtb \
+	msm8939-v3.0-mtp-jdi.dtb \
+	msm8939-v3.0-mtp-smb1360.dtb \
+	msm8939-v3.0-mtp-wcd9306.dtb \
 	msm8936-qrd-skuk.dtb \
 	msm8936-cdp.dtb \
 	msm8936-cdp-smb1360.dtb \
@@ -104,8 +135,6 @@ dtb-$(CONFIG_ARCH_MSM8916) += msm8916-sim.dtb \
 	msm8936-mtp-wcd9306.dtb \
 	msmtellurium-sim.dtb \
 	msmtellurium-rumi.dtb \
-	msmterbium-sim.dtb \
-	msmterbium-rumi.dtb \
 	msm8929-cdp.dtb \
 	msm8929-mtp.dtb \
 	msm8929-mtp-smb1360.dtb \
@@ -114,6 +143,8 @@ dtb-$(CONFIG_ARCH_MSM8916) += msm8916-sim.dtb \
 	msm8929-qrd-skul.dtb \
 	msm8929-qrd-skulb.dtb \
 	msm8929-cdp-jdi.dtb
+endif
+
 dtb-$(CONFIG_ARCH_MSM8226) += msm8226-sim.dtb \
 	msm8226-fluid.dtb \
 	msm8226-v1-cdp.dtb \
@@ -173,11 +204,8 @@ dtb-$(CONFIG_ARCH_FSM9900) += fsm9900-rumi.dtb \
 	fsm9900-sim.dtb \
 	fsm9900-cdp.dtb \
 	fsm9900-mtp-v1.0.dtb \
-	fsm9900-mtp-v1.1.dtb \
-	fsm9900-mtp-v2.0.dtb
-dtb-$(CONFIG_ARCH_FSM9010) += fsm9010-rumi.dtb \
-	fsm9010-v1.0-mtp.dtb  \
-	fsm9010-v1.0-cdp.dtb
+	fsm9900-mtp-v1.1.dtb
+dtb-$(CONFIG_ARCH_FSM9010) += fsm9010-rumi.dtb
 dtb-$(CONFIG_ARCH_MDM9630) += mdm9630-sim.dtb \
 	mdm9630-v1-cdp.dtb \
 	mdm9630-v1-mtp.dtb \
@@ -187,12 +215,10 @@ dtb-$(CONFIG_ARCH_MDM9630) += mdm9630-sim.dtb \
 	mdm9630-v2-gf-cdp.dtb  \
 	mdm9630-v2-tsmc-mtp.dtb \
 	mdm9630-v2-gf-mtp.dtb
-dtb-$(CONFIG_ARCH_MDM9640) += mdm9640-sim.dtb \
-	mdm9640-rumi.dtb \
-	mdm9640-emmc-cdp.dtb \
-	mdm9640-nand-cdp.dtb \
-	mdm9640-mtp.dtb
-dtb-$(CONFIG_ARCH_MSMVPIPA) += msmvpipa-sim.dtb
+dtb-$(CONFIG_ARCH_MSMZIRC) += msmzirc-sim.dtb \
+	msmzirc-rumi.dtb \
+	msmzirc-cdp.dtb \
+	msmzirc-mtp.dtb
 dtb-$(CONFIG_ARCH_MDMFERRUM) += mdmferrum-sim.dtb \
 	mdmferrum-rumi.dtb \
 	mdmferrum-cdp.dtb \
@@ -224,13 +250,33 @@ dtb-$(CONFIG_ARCH_APQ8084) += apq8084-v1.0-old-pwr-grid-liquid.dtb \
 	apq8084-v1.1-old-pwr-grid-mdm9x35-alt-cdp.dtb \
 	apq8084-v1.1-mdm9x35-alt-cdp.dtb \
 	apq8084-v1.1-sbc.dtb
+dtb-$(CONFIG_ARCH_MSM8994) += msm8994-v1-sim.dtb \
+	msm8994-rumi.dtb \
+	msm8994-v1-cdp.dtb \
+	msm8994-pmi8994-pm8004-v1-cdp.dtb \
+	msm8994-v1-mtp.dtb \
+	msm8994-pmi8994-pm8004-v1-mtp.dtb \
+	msm8994-v1-liquid.dtb \
+	msm8994-v1-fluid.dtb \
+	apq8094-v1-cdp.dtb \
+	apq8094-v1-mtp.dtb \
+	apq8094-v1-liquid.dtb \
+	apq8094-v1-fluid.dtb \
+	apq8094-v1-dragonboard.dtb \
+	msm8994-v2-sim.dtb \
+	msm8994-v2-cdp.dtb \
+	msm8994-pmi8994-pm8004-v2-cdp.dtb \
+	msm8994-v2-mtp.dtb \
+	msm8994-pmi8994-pm8004-v2-mtp.dtb \
+	msm8994-v2-liquid.dtb \
+	msm8994-v2-fluid.dtb \
+	apq8094-v2-cdp.dtb \
+	apq8094-v2-mtp.dtb \
+	apq8094-v2-liquid.dtb \
+	apq8094-v2-fluid.dtb
 
 dtb-$(CONFIG_ARCH_MSM8992) += msm8992-sim.dtb \
-	msm8992-rumi.dtb \
-	msm8992-cdp.dtb \
-	msm8992-mtp.dtb \
-	msm8992-pmi8994-pm8004-cdp.dtb \
-	msm8992-pmi8994-pm8004-mtp.dtb
+	msm8992-rumi.dtb
 
 DTB_NAMES := $(subst $\",,$(CONFIG_BUILD_ARM_APPENDED_DTB_IMAGE_NAMES))
 ifneq ($(DTB_NAMES),)
