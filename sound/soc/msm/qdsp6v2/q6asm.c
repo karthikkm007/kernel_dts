@@ -2272,6 +2272,11 @@ static int __q6asm_open_write(struct audio_client *ac, uint32_t format,
 	     (open.postprocopo_id == ASM_STREAM_POSTPROC_TOPO_ID_HPX_PLUS))
 		open.bits_per_sample = 24;
 
+	/* For DTS EAGLE only, force 24 bit */
+	if ((open.postprocopo_id == ASM_STREAM_POSTPROC_TOPO_ID_DTS_HPX) ||
+	     (open.postprocopo_id == ASM_STREAM_POSTPROC_TOPO_ID_HPX_PLUS))
+		open.bits_per_sample = 24;
+
 	pr_debug("%s: perf_mode %d asm_topology 0x%x bps %d\n", __func__,
 		 ac->perf_mode, open.postprocopo_id, open.bits_per_sample);
 
@@ -4342,12 +4347,12 @@ int q6asm_dts_eagle_set(struct audio_client *ac, int param_id, uint32_t size,
 	ad->data.param_id = param_id;
 	ad->data.param_size = size;
 	ad->data.reserved = 0;
-	atomic_set(&ac->cmd_state, 1);
+	atomic_set(&ac->cmd_state, -1);
 
 	if (po) {
 		struct list_head *ptr, *next;
 		struct asm_buffer_node *node;
-		pr_debug("DTS_EAGLE_ASM - %s: using out of band memory (virtual %pK, physical %lu)\n",
+		pr_debug("DTS_EAGLE_ASM - %s: using out of band memory (virtual %pK, physical %pK)\n",
 			__func__, po->kvaddr, (long)po->paddr);
 		ad->param.data_payload_addr_lsw = lower_32_bits(po->paddr);
 		ad->param.data_payload_addr_msw = upper_32_bits(po->paddr);
@@ -4392,11 +4397,20 @@ int q6asm_dts_eagle_set(struct audio_client *ac, int param_id, uint32_t size,
 	}
 
 	rc = wait_event_timeout(ac->cmd_wait,
-			(atomic_read(&ac->cmd_state) <= 0), 1*HZ);
+			(atomic_read(&ac->cmd_state) >= 0), 1*HZ);
 	if (!rc) {
 		pr_err("DTS_EAGLE_ASM - %s: timeout, set-params paramid[0x%x]\n",
 			__func__, ad->data.param_id);
-		rc = -EINVAL;
+		rc = -ETIMEDOUT;
+		goto fail_cmd;
+	}
+
+	if (atomic_read(&ac->cmd_state) > 0) {
+		pr_err("%s: DSP returned error[%s]\n",
+				__func__, adsp_err_get_err_str(
+				atomic_read(&ac->cmd_state)));
+		rc = adsp_err_get_lnx_err_code(
+				atomic_read(&ac->cmd_state));
 		goto fail_cmd;
 	}
 	rc = 0;
@@ -4435,7 +4449,7 @@ int q6asm_dts_eagle_get(struct audio_client *ac, int param_id, uint32_t size,
 	ad->param.param_id = param_id;
 	ad->param.param_max_size = size + APR_CMD_GET_HDR_SZ;
 	ad->param.reserved = 0;
-	atomic_set(&ac->cmd_state, 1);
+	atomic_set(&ac->cmd_state, -1);
 
 	generic_get_data = kzalloc(size + sizeof(struct generic_get_data_),
 				   GFP_KERNEL);
@@ -4449,7 +4463,7 @@ int q6asm_dts_eagle_get(struct audio_client *ac, int param_id, uint32_t size,
 	if (po) {
 		struct list_head *ptr, *next;
 		struct asm_buffer_node *node;
-		pr_debug("DTS_EAGLE_ASM - %s: using out of band memory (virtual %pK, physical %lu)\n",
+		pr_debug("DTS_EAGLE_ASM - %s: using out of band memory (virtual %pK, physical %pK)\n",
 			 __func__, po->kvaddr, (long)po->paddr);
 		ad->param.data_payload_addr_lsw = lower_32_bits(po->paddr);
 		ad->param.data_payload_addr_msw = upper_32_bits(po->paddr);
@@ -4493,11 +4507,20 @@ int q6asm_dts_eagle_get(struct audio_client *ac, int param_id, uint32_t size,
 	}
 
 	rc = wait_event_timeout(ac->cmd_wait,
-			(atomic_read(&ac->cmd_state) <= 0), 1*HZ);
+			(atomic_read(&ac->cmd_state) >= 0), 1*HZ);
 	if (!rc) {
 		pr_err("DTS_EAGLE_ASM - %s: timeout in get\n",
 			__func__);
-		rc = -EINVAL;
+		rc = -ETIMEDOUT;
+		goto fail_cmd;
+	}
+
+	if (atomic_read(&ac->cmd_state) > 0) {
+		pr_err("%s: DSP returned error[%s]\n",
+				__func__, adsp_err_get_err_str(
+				atomic_read(&ac->cmd_state)));
+		rc = adsp_err_get_lnx_err_code(
+				atomic_read(&ac->cmd_state));
 		goto fail_cmd;
 	}
 
